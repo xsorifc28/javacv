@@ -208,23 +208,12 @@ public class RealSenseFrameGrabber extends FrameGrabber {
     private boolean startedOnce = false;
     private boolean behaveAsColorFrameGrabber = false;
 
-    public device loadDevice() throws FrameGrabber.Exception{
-        if (context == null || context.get_device_count() <= deviceNumber) {
-            throw new Exception("FATAL error: Realsense camera: " + deviceNumber + " not connected/found");
-        }
-        device = context.get_device(deviceNumber);
-        return device;
-    }
-
     @Override
     public void start() throws FrameGrabber.Exception {
         if (context == null || context.get_device_count() <= deviceNumber) {
             throw new Exception("FATAL error: Realsense camera: " + deviceNumber + " not connected/found");
         }
-
-        if (device == null) {
-            device = context.get_device(deviceNumber);
-        }
+        device = context.get_device(deviceNumber);
 
         if (colorEnabled) {
             device.enable_stream(RealSense.color, imageWidth, imageHeight, RealSense.rgb8, (int) frameRate);
@@ -274,7 +263,7 @@ public class RealSenseFrameGrabber extends FrameGrabber {
         rawDepthImageData = device.get_frame_data(RealSense.depth);
 //        ShortBuffer bb = data.position(0).limit(640 * 480 * 2).asByteBuffer().asShortBuffer();
 
-        int iplDepth = IPL_DEPTH_16U, channels = 1;
+        int iplDepth = IPL_DEPTH_16S, channels = 1;
         int deviceWidth = device.get_stream_width(RealSense.depth);
         int deviceHeight = device.get_stream_height(RealSense.depth);
 
@@ -287,14 +276,14 @@ public class RealSenseFrameGrabber extends FrameGrabber {
 
         cvSetData(rawDepthImage, rawDepthImageData, deviceWidth * channels * iplDepth / 8);
 
-//        if (iplDepth > 8 && !ByteOrder.nativeOrder().equals(byteOrder)) {
-//            // ack, the camera's endianness doesn't correspond to our machine ...
-//            // swap bytes of 16-bit images
-//            ByteBuffer bb = rawDepthImage.getByteBuffer();
-//            ShortBuffer in = bb.order(ByteOrder.BIG_ENDIAN).asShortBuffer();
-//            ShortBuffer out = bb.order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
-//            out.put(in);
-//        }
+        if (iplDepth > 8 && !ByteOrder.nativeOrder().equals(byteOrder)) {
+            // ack, the camera's endianness doesn't correspond to our machine ...
+            // swap bytes of 16-bit images
+            ByteBuffer bb = rawDepthImage.getByteBuffer();
+            ShortBuffer in = bb.order(ByteOrder.BIG_ENDIAN).asShortBuffer();
+            ShortBuffer out = bb.order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
+            out.put(in);
+        }
 
         return rawDepthImage;
     }
