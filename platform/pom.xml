@@ -10,16 +10,6 @@
     <relativePath></relativePath>
   </parent>
 
-  <modules>
-    <module>
-      javacv-platform
-    </module>
-
-    <module>
-      javacv
-    </module>
-  </modules>
-
   <groupId>org.bytedeco</groupId>
   <artifactId>javacv-platform</artifactId>
   <name>JavaCV Platform</name>

@@ -6,6 +6,16 @@
   <artifactId>javacv</artifactId>
   <version>1.3.4-SNAPSHOT</version>
 
+  <modules>
+    <module>
+      javacv-platform
+    </module>
+
+    <module>
+      javacv
+    </module>
+  </modules>
+
   <name>JavaCV</name>
   <description>Java interface to OpenCV and more</description>
   <url>http://bytedeco.org/javacv/</url>
